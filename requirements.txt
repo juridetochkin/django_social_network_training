@@ -1,0 +1,4 @@
+pytest-django==3.8.0
+django==2.2.9
+pytest~=6.2.2
+django-debug-toolbar~=3.2

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Записи Сообщества {{ group }}{% endblock %}
+{% block header %}{{ group }}{% endblock %}
+{% block content %}
+
+    <p>
+        {{ group.description }}
+    </p>
+
+    {% for post in posts %}
+        <h3>Автор: {{ post.author.get_full_name }}; дата публикации: {{ post.pub_date }}</h3>
+        <p>{{ post.text | linebreaksbr}}</p>
+        <hr>
+    {% endfor %}
+
+    <a href="{% url 'index' %}">На главную</a>
+
+{% endblock %}
