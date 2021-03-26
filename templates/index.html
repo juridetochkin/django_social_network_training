@@ -3,21 +3,27 @@
 {% block header %}Последние обновления на сайте{% endblock %}
 {% block content %}
 
-    {% for post in posts %}
-    <h3>
-        Автор: {{ post.author.get_full_name }}, Дата публикации: {{ post.pub_date|date:"d M Y" }}
-    </h3>
+    {% for post in page %}
+        <h3>
+            Автор: {{ post.author.get_full_name }}, Дата публикации: {{ post.pub_date|date:"d M Y" }}
+        </h3>
 
-    <h5>
-        {% if post.group %}
-            В сообществе: <a href="group/{{ post.group.slug }}"> {{ post.group.title }} </a>
-        {% endif %}
-    </h5>
+        <h5>
+            {% if post.group %}
+                В сообществе: <a href="group/{{ post.group.slug }}"> {{ post.group.title }} </a>
+            {% endif %}
+        </h5>
 
-    <p>{{ post.text|linebreaksbr }}</p>
+        <p>{{ post.text|linebreaksbr }}</p>
 
-    <hr>
+        <hr>
 
     {% endfor %}
+
+    {% if page.has_other_pages %}
+
+    {% include "paginator.html" with items=page paginator=paginator %}
+
+    {% endif %}
 
 {% endblock %}
