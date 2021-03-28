@@ -55,7 +55,7 @@ def new_post(request):
 
 
 def profile(request, username):
-    user = User.objects.get(username=username)
+    user = get_object_or_404(User, username=username)
     post_list = Post.objects.filter(author=user)
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get('page')
@@ -67,15 +67,15 @@ def profile(request, username):
 
 
 def post_view(request, username, post_id):
-    user = User.objects.get(username=username)
-    post = Post.objects.get(id=post_id)
+    user = get_object_or_404(User, username=username)
+    post = get_object_or_404(Post, id=post_id)
     return render(request, 'post.html', {'user': user,
                                          'request_user': request.user,
                                          'post': post})
 
 
 def post_edit(request, username, post_id):
-    post = Post.objects.get(id=post_id)
+    post = get_object_or_404(Post, id=post_id)
     author = post.author
     if request.user == author:
         if request.method == "GET":

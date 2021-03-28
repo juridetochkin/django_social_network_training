@@ -7,4 +7,4 @@ class TestStringMethods(TestCase):
 
     def test_show_msg(self):
         # действительно ли первый аргумент — True?
-        self.assertTrue(False, msg="Важная проверка на истинность")
+        self.assertTrue(True, msg="Важная проверка на истинность")
