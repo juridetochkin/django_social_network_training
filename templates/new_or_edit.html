@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if post_id %}
+        Редактировать запись
+    {% else %}
+        Добавить запись
+    {% endif %}
+{% endblock %}
+
+{% block header %}
+    {% if post_id %}
+        Редактировать запись
+    {% else %}
+        Добавить запись
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% for error in form.errors %}
+        {{ error }}
+    {% endfor %}
+
+    {% if post_id %}
+        <form method="post" action="{% url "post_edit" username post_id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Сохранить</button>
+        </form>
+    {% else %}
+        <form method="post" action="{% url "new_post" %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Добавить</button>
+        </form>
+    {% endif %}
+
+
+{% endblock %}
