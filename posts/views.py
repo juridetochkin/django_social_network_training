@@ -74,10 +74,10 @@ def post_view(request, username, post_id):
                                          'post': post})
 
 
-def post_edit(request, username, post_id):
+def post_edit(request, username, post_id):                   # Check this func !
     post = get_object_or_404(Post, id=post_id)
     author = post.author
-    if request.user == author:
+    if request.user == author:                              # Attention here and below
         if request.method == "GET":
             form = PostForm(instance=post)
             return render(request, 'new_or_edit.html', {'form': form,
@@ -91,7 +91,7 @@ def post_edit(request, username, post_id):
                 post.save()
                 return redirect('profile', username)
             else:
-                return render(request,
+                return render(request,                     # Repetition here ! (might unite with in IF statement upper))
                               'new_or_edit.html',
                               {'form': form,
                                'username': username,
