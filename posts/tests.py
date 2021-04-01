@@ -50,7 +50,7 @@ class TestPostsApp(TestCase):
         self.assertRedirects(response, '/')
 
         # Checking for post contain in Index, Profile, Post pages
-        post_id = Post.objects.get(text='foobar').id  # Get post_id value here
+        post_id = Post.objects.get(text=post_text).id          # Get post id
         for url in self.get_urls(self.username, post_id):
             response = self.client.get(url)
             self.assertContains(response, post_text)
