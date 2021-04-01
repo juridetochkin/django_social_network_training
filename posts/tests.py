@@ -8,7 +8,7 @@ User = get_user_model()
 
 
 class TestPostsApp(TestCase):
-    def setUp(self):  # Preparing test user entry and creating Client instance
+    def setUp(self):                 # Preparing test user entry and creating Client instance
         self.client = Client()
         self.username = 'bratok777'
         self.password = '12345678Dj'
@@ -21,9 +21,17 @@ class TestPostsApp(TestCase):
                                              },
                          follow=True)
 
+    @staticmethod
+    def get_urls(username, post_id):
+        return [reverse('index'),
+                reverse('profile', kwargs={'username': username}),
+                reverse('post', kwargs={'username': username,
+                                        'post_id': post_id})]
+
     def test_post_login(self):
         post_text = 'foobar'
         edited_text = 'edited foobar'
+
         # Checking if we can login
         response = self.client.login(username=self.username,
                                      password=self.password,
@@ -41,13 +49,9 @@ class TestPostsApp(TestCase):
                                     follow=True)
         self.assertRedirects(response, '/')
 
-        # Checking for post contains in Index, Profile, Post pages
+        # Checking for post contain in Index, Profile, Post pages
         post_id = Post.objects.get(text='foobar').id  # Get post_id value here
-        for url in (reverse('index'),
-                    reverse('profile', kwargs={'username': self.username}),
-                    reverse('post', kwargs={'username': self.username,
-                                            'post_id': post_id})
-                    ):
+        for url in self.get_urls(self.username, post_id):
             response = self.client.get(url)
             self.assertContains(response, post_text)
 
@@ -60,10 +64,7 @@ class TestPostsApp(TestCase):
         self.assertRedirects(response, f'/{self.username}/')
 
         # Checking if post edition was done on referenced pages
-        for url in (reverse('index'),
-                    reverse('profile', kwargs={'username': self.username}),
-                    reverse('post', kwargs={'username': self.username,
-                                            'post_id': post_id})):
+        for url in self.get_urls(self.username, post_id):
             response = self.client.get(url)
             self.assertContains(response, edited_text)
 
