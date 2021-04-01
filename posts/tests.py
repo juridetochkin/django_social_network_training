@@ -11,7 +11,7 @@ class TestPostsApp(TestCase):
     def setUp(self):  # Preparing test user entry and creating Client instance
         self.client = Client()
         self.username = 'bratok777'
-        self.password = '12345'
+        self.password = '12345678Dj'
         self.client.post(reverse('signup'), {'first_name': 'Michael',
                                              'last_name': 'Circle',
                                              'username': self.username,

@@ -11,8 +11,8 @@ User = get_user_model()
 def index(request):
     post_list = list(Post.objects.order_by('-pub_date').all())
     paginator = Paginator(post_list, 10)
-    page_number = request.GET.get('page')    # переменная в URL с номером запрошенной страницы
-    page = paginator.get_page(page_number)   # получить записи с нужным смещением
+    page_number = request.GET.get('page')  # переменная в URL с номером запрошенной страницы
+    page = paginator.get_page(page_number)  # получить записи с нужным смещением
     return render(request, "index.html",
                   {'page': page,
                    'paginator': paginator})
@@ -74,26 +74,23 @@ def post_view(request, username, post_id):
                                          'post': post})
 
 
-def post_edit(request, username, post_id):                   # Check this func !
+def post_edit(request, username, post_id):
     post = get_object_or_404(Post, id=post_id)
     author = post.author
-    if request.user == author:                              # Attention here and below
-        if request.method == "GET":
-            form = PostForm(instance=post)
-            return render(request, 'new_or_edit.html', {'form': form,
-                                                        'username': username,
-                                                        'post_id': post_id})
-        elif request.method == "POST":
-            form = PostForm(request.POST, instance=post)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.author = request.user
-                post.save()
-                return redirect('profile', username)
-            else:
-                return render(request,                     # Repetition here ! (might unite with in IF statement upper))
-                              'new_or_edit.html',
-                              {'form': form,
-                               'username': username,
-                               'post_id': post_id})
-    return redirect('post', username, post_id)
+    form = PostForm(request.POST or None, instance=post)
+
+    if request.user != author \
+            or request.method not in ("GET", "POST"):
+        return redirect('post', username, post_id)
+
+    if not form.is_valid():
+        return render(request, 'new_or_edit.html', {'form': form,
+                                                    'username': username,
+                                                    'post_id': post_id})
+    post = form.save(commit=False)
+    post.author = request.user
+    post.save()
+    return redirect('profile', username)
+
+
+
