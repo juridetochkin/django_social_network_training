@@ -11,8 +11,8 @@ User = get_user_model()
 def index(request):
     post_list = list(Post.objects.order_by('-pub_date').all())
     paginator = Paginator(post_list, 10)
-    page_number = request.GET.get('page')  # переменная в URL с номером запрошенной страницы
-    page = paginator.get_page(page_number)  # получить записи с нужным смещением
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
     return render(request, "index.html",
                   {'page': page,
                    'paginator': paginator})
@@ -93,4 +93,11 @@ def post_edit(request, username, post_id):
     return redirect('profile', username)
 
 
+def page_not_found(request, exception):  # Check exception
+    # 'exception' var is only received by the func, and not returned
+    return render(request, "misc/404.html",
+                  {"path": request.path}, status=404)
 
+
+def server_error(request):
+    return render(request, "misc/500.html", status=500)

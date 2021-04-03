@@ -8,7 +8,8 @@ User = get_user_model()
 
 
 class TestPostsApp(TestCase):
-    def setUp(self):                 # Preparing test user entry and creating Client instance
+    # Preparing test user account and creating Client instance
+    def setUp(self):
         self.client = Client()
         self.username = 'bratok777'
         self.password = '12345678Dj'
