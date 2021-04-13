@@ -2,8 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import PostForm
-from .models import Group, Post
+from .forms import PostForm, CommentForm
+from .models import Group, Post, Comment
 
 User = get_user_model()
 
@@ -45,7 +45,8 @@ def group_posts(request, slug):
 
 @login_required()
 def new_post(request):
-    form = PostForm(request.POST or None)
+    form = PostForm(request.POST or None,
+                    files=request.FILES or None)
     if not form.is_valid():
         return render(request, "new_or_edit.html", {"form": form})
     post = form.save(commit=False)
@@ -69,18 +70,26 @@ def profile(request, username):
 def post_view(request, username, post_id):
     user = get_object_or_404(User, username=username)
     post = get_object_or_404(Post, id=post_id)
+    comments = post.comments.all()
+    form = CommentForm()
     return render(request, 'post.html', {'user': user,
                                          'request_user': request.user,
-                                         'post': post})
+                                         'post': post,
+                                         'items': comments,
+                                         'form': form
+                                         })
 
 
+@login_required()
 def post_edit(request, username, post_id):
     post = get_object_or_404(Post, id=post_id)
     author = post.author
-    form = PostForm(request.POST or None, instance=post)
+    form = PostForm(request.POST or None,
+                    files=request.FILES or None,
+                    instance=post)
 
     if request.user != author \
-            or request.method not in ("GET", "POST"):
+            or request.method not in ("GET", "POST"):  # CHECK THIS
         return redirect('post', username, post_id)
 
     if not form.is_valid():
@@ -91,6 +100,18 @@ def post_edit(request, username, post_id):
     post.author = request.user
     post.save()
     return redirect('profile', username)
+
+
+@login_required()
+def add_comment(request, username, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    form = CommentForm(request.POST or None)
+
+    comment = form.save(commit=False)
+    comment.author = request.user
+    comment.post = post
+    comment.save()
+    return redirect('post', username, post_id)
 
 
 def page_not_found(request, exception):  # Check exception
