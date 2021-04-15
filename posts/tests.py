@@ -120,7 +120,7 @@ class TestImages(TestCase):
                 reverse('profile', kwargs={'username': username}),
                 reverse('post', kwargs={'username': username,
                                         'post_id': post_id}),
-                reverse('group_posts', kwargs={'slug': group_slug})]
+                reverse('group', kwargs={'slug': group_slug})]
 
     def test_mp3_loading(self):
         with open(
@@ -144,10 +144,10 @@ class TestImages(TestCase):
                              },
                              follow=True)
 
-        self.post = Post.objects.get(text=self.text)
+        post = Post.objects.get(text=self.text)
 
         for url in self.get_urls(self.username,
-                                 self.post.id,
+                                 post.id,
                                  self.group.slug):
             response = self.client.get(url)
             self.assertContains(response, '<img')

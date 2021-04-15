@@ -104,9 +104,17 @@ def post_edit(request, username, post_id):
 
 @login_required()
 def add_comment(request, username, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    form = CommentForm(request.POST or None)
+    post = get_object_or_404(Post, id=post_id, author__username=username)
+    form = CommentForm(request.POST)
 
+    if not form.is_valid():
+        user = get_object_or_404(User, username=username)
+        comments = post.comments.all()
+        return render('post.html', {'user': user,
+                                    'request_user': request.user,
+                                    'post': post,
+                                    'items': comments,
+                                    'form': form})
     comment = form.save(commit=False)
     comment.author = request.user
     comment.post = post
@@ -115,7 +123,7 @@ def add_comment(request, username, post_id):
 
 
 def page_not_found(request, exception):  # Check exception
-    # 'exception' var is only received by the func, and not returned
+    # 'exception' var is only received by the func, and is not returned
     return render(request, "misc/404.html",
                   {"path": request.path}, status=404)
 
