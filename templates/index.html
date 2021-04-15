@@ -1,35 +1,17 @@
 {% extends "base.html" %}
 {% load thumbnail %}
 {% block title %}Последние обновления на сайте{% endblock %}
-{% block header %}Последние обновления на сайте{% endblock %}
 {% block content %}
 
-    {% for post in page %}
-        <h3>
-            {% thumbnail post.image "960x339" crop="center" upscale=True as im %}
-                <img class="card-img" src="{{ im.url }}">
-            {% endthumbnail %}
-            Автор: {{ post.author.get_full_name }}, Дата
-            публикации: {{ post.pub_date|date:"d M Y" }}
-        </h3>
-
-        <h5>
-            {% if post.group %}
-                В сообществе:
-                <a href="group/{{ post.group.slug }}"> {{ post.group.title }} </a>
-            {% endif %}
-        </h5>
-
-        <p>{{ post.text|linebreaksbr }}</p>
-
-        <hr>
-
-    {% endfor %}
+    <div class="container">
+        <h2> Последние обновления на сайте</h2>
+        {% for post in page %}
+            {% include 'post_item.html' with post=post %}
+        {% endfor %}
+    </div>
 
     {% if page.has_other_pages %}
-
         {% include "paginator.html" with items=page paginator=paginator %}
-
     {% endif %}
 
 {% endblock %}
