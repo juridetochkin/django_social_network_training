@@ -82,14 +82,14 @@ def post_view(request, username, post_id):
 
 @login_required()
 def post_edit(request, username, post_id):
-    post = get_object_or_404(Post, id=post_id)
+    post = get_object_or_404(Post, id=post_id, author__username=username)
     author = post.author
     form = PostForm(request.POST or None,
                     files=request.FILES or None,
                     instance=post)
 
     if request.user != author \
-            or request.method not in ("GET", "POST"):  # CHECK THIS
+            or request.method not in ("GET", "POST"):  # TODO CHECK THIS
         return redirect('post', username, post_id)
 
     if not form.is_valid():

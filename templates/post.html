@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
-{% load thumbnail %}
 {% block title %} {{ user.get_full_name }} {% endblock %}
-{# ADD SOMETHING HERE #}
 {% block content %}
 
     <main role="main" class="container">
@@ -40,6 +38,8 @@
                 <!-- Пост -->
                 <div class="container">
                     {% include 'post_item.html' with post=post %}
+                </div>
+                <div class="container">
                     {% include 'comments.html' %}
                 </div>
             </div>
