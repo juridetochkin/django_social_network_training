@@ -7,6 +7,9 @@ from django.urls import reverse
 User = get_user_model()
 
 
+# TODO  Total Refactoring
+
+
 class TestPostsApp(TestCase):
     # Preparing test user account and creating Client instance
     def setUp(self):
@@ -151,3 +154,16 @@ class TestImages(TestCase):
                                  self.group.slug):
             response = self.client.get(url)
             self.assertContains(response, '<img')
+
+
+class TestCache(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_index_cache(self):
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context)
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context, None)
