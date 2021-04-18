@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.cache import cache_page
 from .forms import PostForm, CommentForm
-from .models import Group, Post, Comment, Follow
+from .models import Group, Post, Follow
 
 User = get_user_model()
 

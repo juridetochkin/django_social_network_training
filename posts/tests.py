@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.test.client import Client
 from django.contrib.auth import get_user_model
-from posts.models import Post, Group
+from posts.models import Post, Group, Follow
 from django.urls import reverse
 
 User = get_user_model()
@@ -156,14 +156,55 @@ class TestImages(TestCase):
             self.assertContains(response, '<img')
 
 
-class TestCache(TestCase):
+# class TestCache(TestCase):
+#     def setUp(self):
+#         self.client = Client()
+#
+#     def test_index_cache(self):
+#         response = self.client.get('/')
+#         self.assertEqual(response.status_code, 200)
+#         self.assertTrue(response.context)
+#         response = self.client.get('/')
+#         self.assertEqual(response.status_code, 200)
+#         self.assertEqual(response.context, None)
+
+
+class TestFollow(TestCase):
     def setUp(self):
+        self.user = User.objects.create(username='user',
+                                        password='password')
+        self.author1 = User.objects.create(username='author1',
+                                           password='password')
+        self.author2 = User.objects.create(username='author2',
+                                           password='password')
+        self.post_text = 'It is a new post!'
         self.client = Client()
 
-    def test_index_cache(self):
-        response = self.client.get('/')
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.context)
-        response = self.client.get('/')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context, None)
+        self.client.force_login(user=self.user)
+
+    def test_follow(self):
+        self.client.get(
+            reverse(
+                'profile_follow',
+                kwargs={'username': self.author1.username}),
+            follow=True)
+        self.assertTrue(
+            Follow.objects.filter(
+                user=self.user,
+                author=self.author1).exists())
+        Post.objects.create(author=self.author1,
+                            text=self.post_text)
+        response = self.client.get(reverse('follow_index'))
+        self.assertContains(response, self.post_text)
+
+    def test_unfollow(self):
+        self.client.get(
+            reverse(
+                'profile_unfollow',
+                kwargs={'username': self.author1}),
+            follow=True)
+        self.assertFalse(
+            Follow.objects.filter(user=self.user,
+                                  author=self.author1).exists())
+        response = self.client.get(reverse('follow_index'))
+        self.assertNotContains(response, self.post_text)
