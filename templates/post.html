@@ -11,7 +11,7 @@
 
                 <!-- Пост -->
                 <div class="container">
-                    {% include 'post_item.html' with post=post %}
+                    {% include 'post_item.html' with post=post on_post='True' %}
                 </div>
                 <div class="container">
                     {% include 'comments.html' %}

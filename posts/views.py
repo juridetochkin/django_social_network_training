@@ -68,12 +68,13 @@ def profile(request, username):
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    following = Follow.objects.filter(user=request.user, author=user).exists()
+    following = (Follow.objects.filter(user=request.user, author=user).exists()
+                 if request.user.is_authenticated
+                 else None)
     return render(request, 'profile.html', {'user': user,
-                                            'request_user': request.user,
-                                            'following': following,
                                             'page': page,
-                                            'paginator': paginator})
+                                            'paginator': paginator,
+                                            'following': following})
 
 
 def post_view(request, username, post_id):
@@ -81,9 +82,10 @@ def post_view(request, username, post_id):
     post = get_object_or_404(Post, id=post_id)
     comments = post.comments.all()
     form = CommentForm()
-    following = Follow.objects.filter(user=request.user, author=user).exists()
+    following = (Follow.objects.filter(user=request.user, author=user).exists()
+                 if request.user.is_authenticated
+                 else None)
     return render(request, 'post.html', {'user': user,
-                                         'request_user': request.user,
                                          'post': post,
                                          'items': comments,
                                          'form': form,
@@ -135,9 +137,7 @@ def add_comment(request, username, post_id):
 
 @login_required
 def follow_index(request):
-    follows = Follow.objects.filter(user=request.user)
-    authors = User.objects.filter(following__in=follows).values('id')
-    posts = Post.objects.filter(author_id__in=authors)
+    posts = Post.objects.filter(author__following__user=request.user)
 
     paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
@@ -151,7 +151,8 @@ def follow_index(request):
 def profile_follow(request, username):
     user = request.user
     author = User.objects.get(username=username)
-    if not Follow.objects.filter(user=user, author=author).exists():
+    if not user == author\
+            and not Follow.objects.filter(user=user, author=author).exists():
         Follow.objects.create(user=user, author=author)
     return redirect('profile', username)
 

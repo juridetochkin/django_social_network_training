@@ -62,3 +62,6 @@ class Follow(models.Model):
 
     def __str__(self):
         return f'User {self.user} is following {self.author}'
+
+    class Meta:
+        unique_together = ['user', 'author']

@@ -11,21 +11,23 @@
             </div>
         </div>
         <ul class="list-group list-group-flush">
-            <li class="list-group-item">
-                {% if following %}
-                    <a class="btn btn-lg btn-light"
-                       href="{% url 'profile_unfollow' user.username %}"
-                       role="button">
-                        Отписаться
-                    </a>
-                {% else %}
-                    <a class="btn btn-lg btn-primary"
-                       href="{% url 'profile_follow' user.username %}"
-                       role="button">
-                        Подписаться
-                    </a>
-                {% endif %}
-            </li>
+            {% if not request.user == user and request.user.is_authenticated %}
+                <li class="list-group-item">
+                    {% if following %}
+                        <a class="btn btn-lg btn-light"
+                           href="{% url 'profile_unfollow' user.username %}"
+                           role="button">
+                            Отписаться
+                        </a>
+                    {% else %}
+                        <a class="btn btn-lg btn-primary"
+                           href="{% url 'profile_follow' user.username %}"
+                           role="button">
+                            Подписаться
+                        </a>
+                    {% endif %}
+                </li>
+            {% endif %}
             <li class="list-group-item">
                 <div class="h6 text-muted">
                     Подписчиков: {{ user.following.count }} <br/>
