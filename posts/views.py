@@ -9,7 +9,7 @@ from .models import Group, Post, Follow
 User = get_user_model()
 
 
-@cache_page(20, key_prefix='index_page')
+# @cache_page(20, key_prefix='index_page')
 def index(request):
     post_list = list(
         Post.objects.select_related(
