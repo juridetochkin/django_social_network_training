@@ -1,1 +1,2 @@
-# backend_community_homework
+Studiyng Django. 
+Yandex.Practicum Python- Dev. course
