@@ -1,2 +1,4 @@
 Studiyng Django. 
-Yandex.Practicum Python- Dev. course
+Simple training Blog-like project.
+
+Based on 'Yandex.Practicum Python- Dev. course'
